@@ -1,0 +1,22 @@
+package race;
+import java.awt.Image;
+
+import javax.swing.ImageIcon;
+
+public class MyCar {
+	
+	Image img = new ImageIcon("E:\\oop\\romanskaya\\workspace\\Gonochki\\src\\race\\img\\mycar.png").getImage();
+	int speed = 4;
+	int speedup = 0;
+	int way = 0;
+	int x = 500;
+	int y = 327;
+	int layer1 = 0;
+	
+	public void move(){
+		way += speed;
+		layer1 -= speed;
+		
+	}
+
+}
