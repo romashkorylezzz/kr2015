@@ -1,0 +1,28 @@
+package race;
+import java.awt.Image;
+import java.awt.Rectangle;
+
+import javax.swing.ImageIcon;
+
+public class EvilCar {
+     int x;
+     int y;
+     int speed;
+     Image img = new ImageIcon("E:\\oop\\romanskaya\\workspace\\Gonochki\\src\\race\\img\\evilcar.png").getImage();
+     Road road;
+     
+     public Rectangle getRect(){
+    	 return new Rectangle(x, y, 160, 72);
+     }
+     
+     public EvilCar(int x, int y, int speed, Road road) {
+    	 this.x = x;
+    	 this.y = y;
+    	 this.speed = speed;
+    	 this.road = road;
+	}
+	public void move(){
+    	 x = x - road.m.speed + speed;
+    	 
+     }
+}
