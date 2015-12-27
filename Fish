@@ -5,14 +5,19 @@ import java.awt.event.KeyEvent;
 
 import javax.swing.ImageIcon;
 
-public class MyCar {
+public class Fish {
 	
-	public static final int MAX_V = 100;
+	public static final int MAX_V = 200;
 	public static final int MAX_TOP = 50;
-	public static final int MAX_BOTTOM = 350;
+	public static final int MAX_BOTTOM = 425;
 	
-	Image img = new ImageIcon("E:\\oop\\romanskaya\\workspace\\Gonochki\\src\\race\\img\\mycar.png").getImage();
-	  public Rectangle getRect(){
+	
+	Image img_c = new ImageIcon("E:\\oop\\romanskaya\\workspace\\Gonochki\\src\\race\\img\\fish.png").getImage();
+	Image img_l = new ImageIcon("E:\\oop\\romanskaya\\workspace\\Gonochki\\src\\race\\img\\left.png").getImage();
+	Image img_r = new ImageIcon("E:\\oop\\romanskaya\\workspace\\Gonochki\\src\\race\\img\\right.png").getImage();
+	
+	Image img = img_c;
+	public Rectangle getRect(){
 	    	 return new Rectangle(x, y, 160, 77);
 	     }
 	int speed = 0;
@@ -53,10 +58,12 @@ public class MyCar {
         }
         if (key == KeyEvent.VK_UP) {
             dy = 10;
+            img = img_l;
  
     }
         if (key == KeyEvent.VK_DOWN) {
             dy = -10;
+            img = img_r;
  
     }
 }
@@ -69,6 +76,7 @@ public class MyCar {
         }
         if (key == KeyEvent.VK_UP || key == KeyEvent.VK_DOWN) {
             dy = 0;
+            img = img_c;
  
         }
 
