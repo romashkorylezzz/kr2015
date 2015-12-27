@@ -1,5 +1,7 @@
 package race;
 
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -17,24 +19,29 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
-public class Road extends JPanel implements ActionListener, Runnable{
-	
-	Timer mainTimer = new Timer(20, this);
-	
-	Image img = new ImageIcon("E:\\oop\\romanskaya\\workspace\\Gonochki\\src\\race\\img\\Road2.jpg").getImage();
-	
-	MyCar m = new MyCar();
+public class Ocean extends JPanel implements ActionListener, Runnable{
 	
 
-Thread EvilCars = new Thread(this);
-List<EvilCar> evils = new ArrayList<EvilCar>();
+	Timer mainTimer = new Timer(20, this);
+	
+	Image img = new ImageIcon("E:\\oop\\romanskaya\\workspace\\Gonochki\\src\\race\\img\\ocean2.jpg").getImage();
+	
+	Fish m = new Fish();
+	
+
+Thread Sharks = new Thread(this);
+Thread Musics = new Thread(new Music());
+
+List<Shark> sharks = new ArrayList<Shark>();
 	
 	
-	public Road(){
+	public Ocean(){
 		mainTimer.start();
-		EvilCars.start();
+		Sharks.start();
+		Musics.start();
 		addKeyListener(new MyKeyAdapter());
         setFocusable(true);
+        
 	}
 	
 	private class MyKeyAdapter extends KeyAdapter {
@@ -52,9 +59,23 @@ List<EvilCar> evils = new ArrayList<EvilCar>();
 		g.drawImage(img, m.layer2, 0, null);
 		g.drawImage(m.img, m.x, m.y, null);
 		
-	Iterator<EvilCar> i = evils.iterator();
+		double speed = (200/Fish.MAX_V) * m.speed;
+		g.setColor(Color.RED);
+		Font font = new Font("Times New Roman",Font.BOLD, 20);
+		g.setFont(font);
+		g.drawString("Скорость:" + speed + "км/ч", 400, 30);
+		
+		double way = m.way/1000;
+		g.setColor(Color.RED);
+		Font font1 = new Font("Times New Roman",Font.BOLD,20);
+		g.setFont(font1);
+		g.drawString("Пройденный путь:"+ way + "км", 400, 50);
+		
+		
+		
+	Iterator<Shark> i = sharks.iterator();
 		while(i.hasNext()){
-			EvilCar e = i.next();
+			Shark e = i.next();
 			if (e.x >= 2400 || e.x <= -2400){
 				i.remove();
 			} else{	
@@ -69,16 +90,27 @@ List<EvilCar> evils = new ArrayList<EvilCar>();
 		m.move();
 		repaint();
 		testCrash();
+		testWin();
 		
 	}
 
+	private void testWin() {
+		
+		if (m.way > 50000){
+			JOptionPane.showMessageDialog(null, "Вы выиграли!");
+			System.exit(0);
+		}
+		
+	}
+
+
 	private void testCrash() {
 		
-		Iterator<EvilCar> i = evils.iterator();
+		Iterator<Shark> i = sharks.iterator();
 		while(i.hasNext()){
-			EvilCar e = i.next();
+			Shark e = i.next();
 			if (m.getRect().intersects(e.getRect())){
-				JOptionPane.showMessageDialog(null, "Врезались");
+				JOptionPane.showMessageDialog(null, "Вас съели!");
 				System.exit(1);
 			}
 		}
@@ -91,8 +123,8 @@ List<EvilCar> evils = new ArrayList<EvilCar>();
 			Random rand = new Random();
 			try {
 				Thread.sleep(rand.nextInt(2000));
-				evils.add(new EvilCar(1200,
-						rand.nextInt(300),
+				sharks.add(new Shark(1200,
+						rand.nextInt(450),
 						rand.nextInt(60),
 						this));
 			} catch (InterruptedException e) {
@@ -103,4 +135,3 @@ List<EvilCar> evils = new ArrayList<EvilCar>();
 	}
 		
 	}
-
