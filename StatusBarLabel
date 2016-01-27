@@ -1,0 +1,59 @@
+import javax.swing.*;
+import java.awt.*;
+
+public class StatusBarLabel extends JLabel{
+    public StatusBarLabel(){
+        intStatusBar();
+    }
+
+    private void intStatusBar(){
+        setOpaque(true);
+        setBackground(new Color(0xA669FF));
+        setHorizontalAlignment(CENTER);
+        setFont(new Font("Microsoft JhengHei UI Light", Font.BOLD, 16));
+        setForeground(new Color(0xFBF9FF));
+    }
+
+    public void gameEndStatus(){
+        setText("Игра окончена");
+    }
+
+    public void menuStatus(){
+        setText("Меню");
+    }
+
+    public void fifteenthMixStatus(){
+        setText("Пятнашки перемешиваются");
+    }
+
+    public void gameContinueStatus(){
+        setText("Игра идет");
+    }
+
+    public void tapToNewGameStatus(){
+        setText("Нажмите на любую пятнашку для новой игры");
+    }
+
+    public void gameEnd_tapToNewGame_InThread(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                boolean swiper = true; //переключатель
+                gameEndStatus();
+                while (getText().equals("Игра окончена") || getText().equals("Нажмите на любую пятнашку для новой игры")){
+                    if (swiper)
+                        gameEndStatus();
+                    else
+                        tapToNewGameStatus();
+
+                    swiper = !swiper; 
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }).start();
+    }
+}
