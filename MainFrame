@@ -1,0 +1,93 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class MainFrame extends JFrame{
+    public static GamePanel gamePanel;
+    public static StatusBarLabel statusBarLabel;
+    public static JButton menuButton;
+    public static MenuPanel menuPanel;
+    public static JPanel mainPanel;
+    private JPanel panelWithStatusBarAndMenuButton;
+
+    public MainFrame(){
+        initMainFrame();
+        initMainFrameComponents();
+    }
+
+    private void initMainFrame(){
+        setTitle("Пятнашки");
+        setBounds(0, 0, 505, 528);
+        setResizable(false);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+    }
+
+    private void initMainFrameComponents(){
+        initMainPanel();
+        initPanelWithStatusBarAndMenuButton();
+        initStatusBar();
+        initMenuButton();
+        initGame();
+        initMenu();
+    }
+
+    private void initMainPanel(){
+        mainPanel = new JPanel();
+        mainPanel.setLayout(null);
+        mainPanel.setOpaque(true);
+        mainPanel.setBackground(new Color(0x2814D2));
+
+        add(mainPanel, BorderLayout.CENTER);
+    }
+
+    private void initPanelWithStatusBarAndMenuButton(){
+        panelWithStatusBarAndMenuButton = new JPanel(new BorderLayout(4, 0));
+        panelWithStatusBarAndMenuButton.setOpaque(false);
+        panelWithStatusBarAndMenuButton.setBounds(0, 0, 500, 25);
+
+        mainPanel.add(panelWithStatusBarAndMenuButton);
+    }
+
+    private void initStatusBar(){
+        statusBarLabel = new StatusBarLabel();
+        statusBarLabel.menuStatus();
+        panelWithStatusBarAndMenuButton.add(statusBarLabel, BorderLayout.CENTER);
+    }
+
+    private void initGame(){
+        gamePanel = new GamePanel();
+        mainPanel.add(gamePanel);
+    }
+
+    private void initMenu(){
+        menuPanel = new MenuPanel();
+        mainPanel.add(menuPanel, BorderLayout.CENTER, 0);
+    }
+
+    private void initMenuButton(){
+        menuButton = new JButton("Меню");
+        menuButton.setFont(new Font("Microsoft JhengHei UI Light", Font.BOLD, 16));
+        menuButton.setForeground(new Color(0xFBF9FF));
+        menuButton.setBackground(new Color(0xA669FF));
+        menuButton.setFocusable(false);
+        menuButton.setBorderPainted(false);
+        menuButton.setVisible(false);
+
+        menuButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                gamePanel.pauseGame();
+                menuPanel.setContinueButtonEnabled(!gamePanel.isGameEnd());
+                menuPanel.setVisible(true);
+            }
+        });
+
+        panelWithStatusBarAndMenuButton.add(menuButton, BorderLayout.EAST);
+    }
+
+    public static void main(String[] args) {
+        MainFrame mainFrame = new MainFrame();
+        mainFrame.setVisible(true);
+    }
+}
