@@ -1,0 +1,32 @@
+import javax.swing.*;
+import java.awt.*;
+
+public class StepCounterLabel extends JLabel{
+    private int stepCount;
+
+    public StepCounterLabel(){
+        initStepCounter();
+    }
+
+    private void initStepCounter(){
+        stepCount = 0;
+        setHorizontalAlignment(LEFT); 
+        setFont(new Font("Microsoft JhengHei UI Light", Font.BOLD, 16));
+        setForeground(new Color(0xFBF9FF)); 
+        printStepCount();
+    }
+
+    private void printStepCount(){
+        setText("Количество шагов: " + Integer.toString(stepCount));
+    }
+
+    public void incStepCount(){
+        stepCount++;
+        printStepCount();
+    }
+
+    public void clear(){
+        stepCount = 0;
+        printStepCount();
+    }
+}
