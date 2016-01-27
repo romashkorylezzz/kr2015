@@ -1,0 +1,204 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Random;
+
+public class GamePanel extends JPanel{
+    private FifteenthButton[] fifteenthButtonArray; 
+    private ActionListener actionListenerForFifteenth; 
+    private int emptyPositionInArray; 
+    private JPanel panelWithTimerAndStepCounter;
+    private TimerOfGameLabel timerOfGameLabel;
+    private StepCounterLabel stepCounterLabel;
+    private boolean isGameEnd = false;
+
+    public GamePanel(){
+        initGamePanel();
+        initGamePanelComponents();
+    }
+
+    private void initGamePanel(){
+        setVisible(false);
+        setLayout(new BorderLayout(4, 4));
+        setBackground(new Color(0x2814D2));
+        setBounds(0, 29, 500, 470);
+    }
+
+    private void initGamePanelComponents(){
+        initActionListenerForFifteenth();
+        initFifteenth(); 
+        placeFifteenthOnThePanel(); 
+        initPanelWithTimerAndStepCounter();
+        initTimer();
+        initStepCounter();
+    }
+
+    private void initActionListenerForFifteenth(){
+        actionListenerForFifteenth = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (!isGameEnd) {
+                    FifteenthButton fifteenthButton = (FifteenthButton) e.getSource(); 
+                    int pos = fifteenthButton.getPositionInArray();
+                    if (swapIsEnabled(pos)) {
+                        stepCounterLabel.incStepCount();
+                        swapFifteenth(fifteenthButton.getPositionInArray(), emptyPositionInArray);
+                        checkGameEnd();
+                    }
+                }
+                else
+                    startGame();
+            }
+        };
+    }
+    private boolean swapIsEnabled(int pos){
+        return isLeftEmpty(pos) || isRightEmpty(pos) || isOnEmpty(pos) || isUnderEmpty(pos);
+    }
+
+    private boolean isUnderEmpty(int pos){
+        return pos - 4 == emptyPositionInArray;
+    }
+
+    private boolean isOnEmpty(int pos){
+        return pos + 4 == emptyPositionInArray;
+    }
+
+    private boolean isRightEmpty(int pos){
+        return pos + 1 == emptyPositionInArray && (pos + 1) % 4 != 0;
+    }
+
+    private boolean isLeftEmpty(int pos){
+       return pos - 1 == emptyPositionInArray && pos % 4 != 0;
+    }
+
+    private void checkGameEnd() {
+        isGameEnd = true;
+        if (emptyPositionIsLastInArray() && fourteenAndFifteenAreLast()) {
+            for (int i = 1; i < 14; i++) {
+                if (fifteenthButtonArray[i - 1].getDigit() > fifteenthButtonArray[i].getDigit()) {
+                    isGameEnd = false;
+                    break;
+                }
+            }
+        }
+        else
+            isGameEnd = false;
+
+        if (isGameEnd) {
+            timerOfGameLabel.pause();
+            MainFrame.statusBarLabel.gameEnd_tapToNewGame_InThread();
+            JOptionPane.showMessageDialog(this, "Наконец - то ты это сделал:)", "Уведомление", JOptionPane.INFORMATION_MESSAGE, null);
+        }
+    }
+
+    private boolean emptyPositionIsLastInArray(){
+        return fifteenthButtonArray[15].getDigit() == 16;
+    }
+
+    private boolean fourteenAndFifteenAreLast(){
+        return fifteenthButtonArray[13].getDigit() == 14 && fifteenthButtonArray[14].getDigit() == 15 ||
+                fifteenthButtonArray[13].getDigit() == 15 && fifteenthButtonArray[14].getDigit() == 14;
+    }
+    private void initFifteenth(){
+        fifteenthButtonArray = new FifteenthButton[16]; 
+        for (int i = 0; i < 16; i++) {
+            FifteenthButton oneFifteenthButton = new FifteenthButton(i + 1, i); 
+            oneFifteenthButton.addActionListener(actionListenerForFifteenth);
+            fifteenthButtonArray[i] = oneFifteenthButton;
+        }
+        emptyPositionInArray = 15; 
+    }
+
+    private void placeFifteenthOnThePanel(){
+        JPanel panelWithFifteenth = new JPanel(new GridLayout(4, 4, 4, 4));
+        panelWithFifteenth.setOpaque(false);
+
+        for (int i = 0; i < 16; i++)
+            panelWithFifteenth.add(fifteenthButtonArray[i]);
+
+        add(panelWithFifteenth, BorderLayout.CENTER);
+    }
+
+    private void initPanelWithTimerAndStepCounter(){
+        panelWithTimerAndStepCounter = new JPanel(new GridLayout(0, 2));
+        panelWithTimerAndStepCounter.setOpaque(true);
+        panelWithTimerAndStepCounter.setBackground(new Color(0xA669FF));
+        add(panelWithTimerAndStepCounter, BorderLayout.SOUTH);
+    }
+
+    private void initTimer(){
+        timerOfGameLabel = new TimerOfGameLabel();
+        panelWithTimerAndStepCounter.add(timerOfGameLabel);
+    }
+
+    private void initStepCounter(){
+        stepCounterLabel = new StepCounterLabel();
+        panelWithTimerAndStepCounter.add(stepCounterLabel);
+    }
+
+    public void startGame(){
+        setVisible(true);
+        MainFrame.menuButton.setVisible(true);
+        isGameEnd = false;
+        stepCounterLabel.clear();
+        mixFifteenthAndStartTimer();
+    }
+
+    private void mixFifteenthAndStartTimer(){ 
+        Random r = new Random();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                MainFrame.statusBarLabel.fifteenthMixStatus();
+                for (int i = 0; i < 16; i++) {
+                    int to = r.nextInt(16);
+                    swapFifteenth(i, to);
+
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                if (MainFrame.statusBarLabel.getText().equals("Пятнашки перемешиваются")) {
+                    MainFrame.statusBarLabel.gameContinueStatus();
+                    timerOfGameLabel.start();
+                }
+            }
+        }).start();
+    }
+
+    public void pauseGame(){
+        setVisible(false);
+        MainFrame.menuButton.setVisible(false);
+        MainFrame.statusBarLabel.menuStatus();
+        timerOfGameLabel.pause();
+    }
+
+    public void resumeGame(){
+        setVisible(true);
+        MainFrame.menuButton.setVisible(true);
+        MainFrame.statusBarLabel.gameContinueStatus();
+        timerOfGameLabel.resume();
+    }
+
+    private void swapFifteenth(int from, int to) {
+        int tmpDigit = fifteenthButtonArray[from].getDigit();
+        fifteenthButtonArray[from].setDigit(fifteenthButtonArray[to].getDigit());
+        fifteenthButtonArray[to].setDigit(tmpDigit);
+
+        checkIsEmpty(from);
+        checkIsEmpty(to);
+    }
+
+    private void checkIsEmpty(int pos){
+        if (fifteenthButtonArray[pos].getDigit() == 16)
+            emptyPositionInArray = fifteenthButtonArray[pos].getPositionInArray();
+    }
+
+    public boolean isGameEnd(){
+        return isGameEnd;
+    }
+}
