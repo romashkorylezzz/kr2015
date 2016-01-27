@@ -1,0 +1,99 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class MenuPanel extends JPanel {
+    private JButton newGameButton, continueButton, helpButton, exitButton;
+
+    public MenuPanel(){
+        initMenu();
+        initMenuComponents();
+    }
+
+    private void initMenu(){
+        setLayout(new GridLayout(4, 0, 0, 1));
+        setOpaque(true);
+        setBackground(new Color(0x2814D2));
+        setBounds(0, 29, 500, 470);
+    }
+
+    private void initMenuComponents(){
+        initNewGameButton();
+        initContinueButton();
+        initHelpButton();
+        initExitButton();
+    }
+
+    private void initNewGameButton() {
+        newGameButton = new JButton("Новая игра");
+        setButtonProperties(newGameButton);
+        add(newGameButton);
+
+        newGameButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                setVisible(false);
+                MainFrame.gamePanel.startGame();
+        }
+        });
+    }
+
+    private void initContinueButton() {
+        continueButton = new JButton("Продолжить");
+        setButtonProperties(continueButton);
+        continueButton.setEnabled(false); 
+        add(continueButton);
+
+        continueButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MainFrame.menuPanel.setVisible(false);
+                MainFrame.gamePanel.resumeGame();
+            }
+        });
+    }
+
+    public void setContinueButtonEnabled(boolean isEnabled){
+        continueButton.setEnabled(isEnabled);
+    }
+
+    private void initHelpButton(){
+        helpButton = new JButton("Помощь");
+        setButtonProperties(helpButton);
+        add(helpButton);
+
+        helpButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JOptionPane.showMessageDialog(MainFrame.menuPanel, "Пятнашки\n" +
+                                "Цель игры - разложить пятнашки по порядку от 1 до 15 от левого верхнего до правого нижнего угла.\n" +
+                                "Пустая клеточка должна быть справа внизу. Победной комбинацией также считается расставовка,\n" +
+                                "в которой цифры 14 и 15 стоят в не правильном порядке (т.к. в таком случае невозможно поставить их на свои места).\n" +
+                                "В игре есть таймер и счетчик ходов.\n" +
+                                "Приятного времяпровождения! ",
+                        "Правила игры", JOptionPane.INFORMATION_MESSAGE);
+            }
+        });
+    }
+
+    private void initExitButton() {
+        exitButton = new JButton("Выход");
+        setButtonProperties(exitButton);
+        add(exitButton);
+
+        exitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.exit(0);
+            }
+        });
+    }
+
+    private void setButtonProperties(JButton button){
+        button.setFont(new Font("Microsoft JhengHei UI Light", Font.BOLD, 50));
+        button.setFocusable(false);
+        button.setBackground(new Color(0x3DF6F1));
+        button.setForeground(new Color(0x2814D2));
+    }
+}
