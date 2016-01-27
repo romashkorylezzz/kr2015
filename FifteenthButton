@@ -1,0 +1,38 @@
+import javax.swing.*;
+import java.awt.*;
+
+public class FifteenthButton extends JButton{
+    private int digit, positionInArray;
+
+    public FifteenthButton(int digit, int positionInArray){
+        this.positionInArray = positionInArray;
+        setDigit(digit);
+        initFifteenth();
+    }
+
+    private void initFifteenth(){
+        setText(Integer.toString(digit));
+        setFont(new Font("Old English Text MT", Font.PLAIN, 70));
+        setFocusable(false);
+        setBackground(new Color(0x3DF6F1));
+        setForeground(new Color(0x2814D2));
+    }
+
+    public int getDigit(){
+        return digit;
+    }
+
+    public void setDigit(int digit){
+        this.digit = digit;
+        if (digit == 16)
+            setVisible(false);
+        else
+            setVisible(true);
+
+        setText(Integer.toString(digit));
+    }
+
+    public int getPositionInArray(){
+        return positionInArray;
+    }
+}
